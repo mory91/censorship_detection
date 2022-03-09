@@ -131,3 +131,7 @@ dmypy.json
 
 # IDE Stuff
 .idea/
+
+# Project
+data_gather/packet_capture/data
+data_gather/packet_capture/backup

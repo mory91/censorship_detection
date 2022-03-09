@@ -3,13 +3,10 @@ include $(cnf)
 export $(shell sed 's/=.*//' $(cnf))
 
 build:
-	docker build -t $(APP_NAME) .
-
-build-nc:
-	docker build --no-cache -t $(APP_NAME) .
+	docker build --build-arg LOG_PATH=$(LOG_PATH) -t $(APP_NAME) .
 
 run:
-	docker run -i -t --rm --env-file=./config.env --cap-add NET_ADMIN --name="$(APP_NAME)" $(APP_NAME)
+	docker run -i -t --rm --env-file=./config.env --cap-add NET_ADMIN -v $(PWD)/$(HOST_LOG_PATH):$(LOG_PATH) --name="$(APP_NAME)" $(APP_NAME)
 
 up: build run
 

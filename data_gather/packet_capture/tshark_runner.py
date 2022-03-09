@@ -12,7 +12,7 @@ def import_url_list(input_file):
     return host_list
 
 def run_tshark_in_background(output_file):
-    cmd = f"tshark -w {output_file}.raw > {output_file}"
+    cmd = f"tshark -w {output_file}"
     process = subprocess.Popen(cmd, shell=True)
     print(f"The process id is : {process.pid}")
     return process
@@ -25,14 +25,25 @@ def stop_tshark_in_backgorund(process_object):
 
 def make_requests(url_list):
     for url in url_list:
-        response = requests.get("http://" + url)
-        print(response.status_code)
-    
+        try:
+            response = requests.get("http://" + url, timeout=5)
+            print(response.status_code)
+        except requests.exceptions.ConnectionError:
+            print(f"{url} had connection error")
+        except requests.exceptions.TooManyRedirects:
+            print(f"{url} had too many redirects")
+        except requests.exceptions.Timeout:
+            print(f"{url} timeout")
+        except Exception as e:
+            print(e)
+
 def main():
     if len(sys.argv) < 3:
-        print("USAGE: python3 tshark_runner.py <input_file> <output_file> ")
+        print("USAGE: python3 tshark_runner.py <input_file> <output_path> ")
     input_file_name = sys.argv[1]
-    output_file_name = sys.argv[2]
+    output_path_name = sys.argv[2]
+
+    output_file_name = f"{output_path_name}/log.raw"
 
     url_list = import_url_list(input_file_name)
     tshark_p = run_tshark_in_background(output_file_name)
