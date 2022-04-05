@@ -1,4 +1,5 @@
 from ast import arg
+from tqdm import tqdm
 import subprocess
 import requests
 import json
@@ -24,10 +25,13 @@ def stop_tshark_in_backgorund(process_object):
     
 
 def make_requests(url_list):
-    for url in url_list:
+    for url in tqdm(url_list, desc="Loading...."):
         try:
-            response = requests.get("http://" + url, timeout=5)
-            print(response.status_code)
+            if not url.startswith('http'):
+                response = requests.get("https://" + url, timeout=5)
+            else:
+                response = requests.get(url, timeout=5)
+            # print(response.status_code)
         except requests.exceptions.ConnectionError:
             print(f"{url} had connection error")
         except requests.exceptions.TooManyRedirects:

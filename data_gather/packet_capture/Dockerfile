@@ -4,4 +4,4 @@ RUN apk add --no-cache tshark coreutils
 WORKDIR /code
 ADD . .
 RUN pip install -r requirements.txt
-CMD ["python", "tshark_runner.py", "hostnames.json", "${LOG_PATH}"]
+CMD ["python", "tshark_runner.py", "trunco.json", "${LOG_PATH}"]
